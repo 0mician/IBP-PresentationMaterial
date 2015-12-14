@@ -19,24 +19,24 @@ Clustered, Regularly Interspaced, Short Palindromic Repeats (CRISPR)
 and CRISPR-associated proteins (Cas proteins) form a complex
 bacterial/archaeal immune response system that mitigates foreign DNA
 activity. The identification of these systems first occured in 1987 in
-\emph{Escherichia coli} \cite{nakata1989unusual}, quickly followed by
-other species of bacteria and archae \cite{mojica1995long}, but their
+\emph{Escherichia coli} \cite{nakata1989unusual}, followed by other
+species of bacteria and archae \cite{mojica1995long}, but their
 function was not elucidated until 2007 \cite{Barrangou23032007}. This
 immune-like system works by capturing short signatures of invading DNA
-and inserting them into the genome of the organism in regions known as
+and inserting them into the genomic material in regions known as
 CRISPR arrays.
 
 These arrays consist of the captured elements, known as spacers, which
 are separated by similarly sized, conserved DNA sequences known as
-repeats.  The arrays are expressed and processed into CRISPR RNA
+repeats.  The arrays are transcribed and processed into CRISPR RNA
 (crRNA). crRNA, together with Cas proteins, form an active complex
 that patrols the cell. If an invader DNA element with a similar
 signature is encountered by the complex, it will be degraded and its
 activity will be prevented \cite{Horvath08012010}.
 
 CRISPR-Cas systems can be categorized into multiple types. Each type
-having a different set of characteristics that makes it somewhat
-unique \cite{makarova2011evolution}.
+having a different set of features that makes it somewhat unique
+\cite{makarova2011evolution}.
 
 Previously \cite{Omicians2015}, our team used computational CRISPR
 detection software like CRT \cite{bland2007crispr} to detect spacers
@@ -49,8 +49,7 @@ identified spacers were also searched against the genomes of the
 bacteria they originated from. Spacers showing up outside of the
 CRISPR region were classified as \emph{hits}. Hits putatively showed
 that there was a possibility for given phages to integrate into
-bacterial genome despite the presence of putative spacers against
-them.
+bacterial genome despite the presence of spacers against them.
 
 The main objective of this project was to make a large database of
 CRISPR elements from all the bacterial/archaeal genomes available in
@@ -67,11 +66,11 @@ elements of data visualization.
 
 \subsection{Classification of CRISPR-Cas systems}
 We attempted to classify CRISPR-Cas systems based on methods proposed
-by Makarova et al. Data set from their studies (supplementary document
+by Makarova \emph{et al.}. The data set from their studies (supplementary document
 7) was first processed into a clean subset (without “partial” subtypes
 and ambiguous classification) to search for possible classifiers. Loci
 were classified as “partial” if they contained neither the full
-complement of effector module genes nor cas9 or cpf1. The
+complement of effector module genes nor \emph{cas9} or \emph{cpf1}. The
 classification criteria was polythetic classification as mentioned in
 their studies \cite{makarova2015updated}.
 
@@ -107,7 +106,7 @@ repeats) in each genome. For this, the CRT software
 \cite{bland2007crispr} was used. In order to treat the the multi-FASTA
 files correctly (e.g for genomes containing plasmid sequences, or
 multiple contigs) the CRT software was wrapped in a python script and
-then applied to the fetched genomes to create the CRT report file
+then applied to the fetched genomes to create the CRT report files
 containing detected CRISPR array(s) in each strain. Next, a custom
 parser was implemented to extract the spacers and repeats from each
 CRT report and structure them into a JSON file.
@@ -261,13 +260,16 @@ information that could be interesting to be visualized include:
   is not associated with any cas genes in near proximity. Such arrays
   may be degenerated or have other functions
   \cite{mandin2007identification}
-\item Displaying the type of CRISPR-Cas systems
-\item Showing the folding of repeats: Kunin et al. clustered putative
-  secondary structures of crRNA based on sequence similarity and
-  ability to form stable secondary structures
-  \cite{kunin2007evolutionary}.
-\item Combining information from cas genes and repeats may provide
-  insights on function and regulation of CRISPR-Cas systems.
+\item Displaying the type of CRISPR-Cas systems: Each type of
+  CRISPR-Cas systems have distinctive features. Displaying the type
+  of CRISPR-Cas systems allows generalization of the
+  whole.\cite{makarova2011evolution,makarova2015updated}
+\item Information about secondary structures of repeats: Kunin et
+  al. clustered putative secondary structures of crRNA based on
+  sequence similarity and ability to form stable secondary structures
+  \cite{kunin2007evolutionary}. Combining this information from the
+  cas genes and the repeats may provide insights on function and
+  regulation of CRISPR-Cas systems.
 \item Protospacer-adjacent-motifs (PAM) sequences: the selection of
   protospacers from invading DNA was shown to be determined by
   recognition of PAMs which is several nucleotides long and varies
