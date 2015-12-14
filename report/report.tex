@@ -20,11 +20,11 @@ and CRISPR-associated proteins (Cas proteins) form a complex
 bacterial/archaeal immune response system that mitigates foreign DNA
 activity. The identification of these systems first occured in 1987 in
 \emph{Escherichia coli} \cite{nakata1989unusual}, followed by other
-species of bacteria and archae \cite{mojica1995long}, but their
-function was not elucidated until 2007 \cite{Barrangou23032007}. This
-immune-like system works by capturing short signatures of invading DNA
-and inserting them into the genomic material in regions known as
-CRISPR arrays.
+species of bacteria and archae in the 90's
+\cite{mojica1995long}. Their function however was not elucidated until
+2007 \cite{Barrangou23032007}. CRISPR-Cas systems work by capturing
+short signatures of invading DNA elements and inserting them into the
+genomic material in regions known as CRISPR arrays.
 
 These arrays consist of the captured elements, known as spacers, which
 are separated by similarly sized, conserved DNA sequences known as
@@ -35,8 +35,8 @@ signature is encountered by the complex, it will be degraded and its
 activity will be prevented \cite{Horvath08012010}.
 
 CRISPR-Cas systems can be categorized into multiple types. Each type
-having a different set of features that makes it somewhat unique
-\cite{makarova2011evolution}.
+having a different set of features and modes of action that makes it
+somewhat unique \cite{makarova2011evolution}.
 
 Previously \cite{Omicians2015}, our team used computational CRISPR
 detection software like CRT \cite{bland2007crispr} to detect spacers
@@ -47,7 +47,7 @@ database. This revealed the origin of about 7\% of spacers, outlining
 the problem of the so-called \emph{biological dark matter}. The
 identified spacers were also searched against the genomes of the
 bacteria they originated from. Spacers showing up outside of the
-CRISPR region were classified as \emph{hits}. Hits putatively showed
+CRISPR region(s) were classified as \emph{hits}. Hits putatively showed
 that there was a possibility for given phages to integrate into
 bacterial genome despite the presence of spacers against them.
 
@@ -66,26 +66,27 @@ elements of data visualization.
 
 \subsection{Classification of CRISPR-Cas systems}
 We attempted to classify CRISPR-Cas systems based on methods proposed
-by Makarova \emph{et al.}. The data set from their studies (supplementary document
-7) was first processed into a clean subset (without “partial” subtypes
-and ambiguous classification) to search for possible classifiers. Loci
-were classified as “partial” if they contained neither the full
-complement of effector module genes nor \emph{cas9} or \emph{cpf1}. The
-classification criteria was polythetic classification as mentioned in
-their studies \cite{makarova2015updated}.
+by Makarova \emph{et al.}. The dataset from their studies
+(supplementary document 7) was first processed into a clean subset
+(removed of “partial” subtypes and ambiguous classification) to search
+for possible classifiers. Loci were classified as “partial” if they
+contained neither the full complement of effector module genes nor
+\emph{cas9} or \emph{cpf1}. The classification criteria used was the
+polythetic classification mentioned in their studies
+\cite{makarova2015updated}.
 
 Two approaches were attempted to tackle the problem, random forest and
 Naive Bayes. Random forest showed unpromising results as the total
 factor level exceeded computational limit. On the other hand, Naive
-Bayes model performed well with the clean dataset with overall
+Bayes model performed well with the clean dataset with an overall
 accuracy of 0.98, high sensitivity and specificity to all subtypes
 except lower sensitivity to CAS-I-A (0.85) and CAS-III-C (0.93) in the
 validation set.
 
 The task proved to be non-trivial and was eventually discontinued due
 to time constraint. Challenges encountered in the process include
-ambiguous classification, need for a pipeline to detect and annotate
-cas genes, and genomes bias etc.
+ambiguous classification, and a need for a pipeline to detect and
+annotate cas genes, and genomes bias etc.
 
 \subsection{Data Processing Pipeline}
 
@@ -98,8 +99,8 @@ meant downloading the genome files (*.fna). Alongside each genome
 file, the corresponding annotation files (*.gff) were also
 downloaded. Finally the corresponding metadata available on NCBI for
 each genome was captured into JSON files. All the files, representing
-about 300 Gb worth of data were stored in a ``one genome, one folder''
-fashion on our server.
+about 300 Gb worth of data, were stored in a ``one genome, one
+folder'' fashion on our server.
 
 The second step was to detect all CRISPR arrays (i.e spacers and
 repeats) in each genome. For this, the CRT software
@@ -109,13 +110,13 @@ multiple contigs) the CRT software was wrapped in a python script and
 then applied to the fetched genomes to create the CRT report files
 containing detected CRISPR array(s) in each strain. Next, a custom
 parser was implemented to extract the spacers and repeats from each
-CRT report and structure them into a JSON file.
+CRT report and structure them into JSON files.
 
 These CRISPR elements and the metadata fetched previously were used to
 populate the relational MySQL database. All spacers available were
 extracted from the MySQL database and consolidated into a multi-FASTA
 file and a blastable database was made using the \emph{formatdb} tool
-from the NCBI BLAST.
+from NCBI BLAST.
 
 \begin{figure}
   \centering
@@ -128,34 +129,33 @@ from the NCBI BLAST.
 The approach taken to expose the database and let the user interact
 with the data was to develop a web application. We used Django to
 accomplish that. Django is a free and open-source, Model-Template-View
-(MTV) web application framework written in python, which encourages
-rapid development and clean, pragmatic design. The web application is
-running on a server using Apache HTTP server.
+(MTV) web application framework written in python. It encourages rapid
+development and clean, pragmatic design. The web application is
+running on a server using an Apache web server.
 
 A key element of the web application is the REST API which allows the
 users to programmatically query the MySQL database in order to obtain
-the data for downstream analysis. This was done using the django REST
-framework, a flexible toolkit for building Web APIs.
+the data for their downstream analysis. This was done using the django
+REST framework, a flexible toolkit for building Web APIs.
 
 As an additional service, users have the option to blast their own
 sequences against our database of spacers elements. They can also
 submit their bacterial or archaeal sequences for CRISPR array(s)
 detection using the CRT software installed on the server. In order to
 efficiently handle user requests for BLAST and CRT services, the
-requests are queued before they are run by the server's backend,
-allowing for more control over the tasks and their resource usage. It
-also provides the option to run them asynchronously. This element was
-developed using Celery as a task queue and RabbitMQ as a message
-broker.
+requests are queued before they are run by the backend, allowing for
+more control over the tasks and their resources usage. It also provides
+the option to run them asynchronously. This element was developed
+using Celery as a task queue and RabbitMQ as a message broker.
 
 We used free and open-source softwares to achieve our goal. We also
 chose to publish our code on github, under a public license. Special
 attention and care were given to reproducibility. As such, the code
-was well documented. Moreover, the environment was also fully
-documented using an “infrastructure as code” approach with the help of
-tools like Ansible. This approach eased the developement phase, and
-provides enthusiast users key elements when trying to reproduce
-everything from scratch on their own infrastructure.
+was well documented. Moreover, the environment was also documented
+using an “infrastructure as code” approach with the help of tools like
+Ansible. This approach eased the developement phase, and provides
+enthusiast users key elements when trying to reproduce everything from
+scratch on their own infrastructure.
 
 \begin{description}
   \item[Repository address: ] https://github.com/Milt0n/CRISPR-Exposed
@@ -179,28 +179,28 @@ visualization was plotted using parallel-coordinates version 0.7.0
 \cite{ParCoordJs}. The charts were plotted using datasets in csv
 format queried from the MySQL application database.
 
-The first dataset was used to plot row chart which shows the
-\emph{log10} number of genomes used in database and histograms that
-shows the frequency distribution of repeats’ and spacers’ length
-detected by CRT. Since these three charts were plotted using the same
-data set, the information is cross-linked. Users can interactively
-filter the information in these charts but it will not affect the
-display in parallel coordinates.
+The first dataset was used to plot a row chart which shows the
+\emph{log10} number of genomes available in the database and 2
+histograms that shows the frequency distribution of repeats’ and
+spacers’ length detected by CRT. Since these three charts were plotted
+using the same data set, the information is cross-linked. Users can
+interactively filter the information in these charts (it will not
+affect the display in parallel coordinates).
 
 The second data set which only consists of genomes with complete
 assembly level was used to plot parallel coordinates which shows the
 groups of prokaryotes, size of genomes and number of CRISPR arrays
-detected per genome. Each line represent a strain, coloured by their
-kingdom (i.e. bacteria in purple, archaea in orange). Axis can be
-reordered and can be filtered by range.
+detected per genome. Each line represents a strain, which are coloured
+by their kingdom (i.e. bacteria in purple, archaea in orange). Axis
+can be reordered and can be filtered by range.
 
 \subsubsection{results}
 
 The row chart shows the \emph{log10} number of genome sequences used
 to populate CRISPR Exposed for each group of prokaryotes. The purpose
 of showing this chart is to inform users that the content of the
-database is highly biased towards some proand this should be taken
-into account when interpreting the distribution of repeats’ and
+database is highly biased towards some species and this should be
+taken into account when interpreting the distribution of repeats’ and
 spacers’ length. About half of the total of the sequences originate
 from firmicutes, proteobacteria and actinobacteria. This chart could
 be further improved into scale-stack row chart in the future to reduce
@@ -208,11 +208,11 @@ the cognitive load of interpreting the results.
 
 The histograms of repeats’ and spacers’ length mainly serve the
 purpose of quality control of CRISPR elements detected by CRT. Length
-of direct repeats should not be deviated too much from length of
-spacers. Data set used to plot the histograms was preprocessed to
+of direct repeats should not deviate too much from length of
+spacers. The dataset used to plot the histograms was preprocessed to
 remove false positive that is not bound by the constraint of parameter
 settings in CRT. For instance, the maximum length of spacers for
-CRISPR detection was set to 48 nucleotide long but there were about
+CRISPR detection was set to 48 nucleotides long but there were about
 3.6\% (28663 out of 790903) of total number of spacers detected by CRT
 is longer than the length specified. These entries were stripped from
 the data set to avoid misleading information.
@@ -230,10 +230,11 @@ identification of CRISPR elements is conducted. About 54,000 genomes
 were used in this analysis. Other projects such as CRISPRdb
 \cite{grissa2007crisprdb}, and CRISPI \cite{rousseau2009crispi} only
 focus on the subset of genomes that have complete level assembly
-(4,000 genomes for CRISPRdb, 1,200 for CRISPI). As such, the spacer
-database constructed is the largest presently available online,
-consisting of 800,000 spacer sequences. We hope it can be useful to
-researchers, and can envision a couple of uses of our dataset:
+(4,000 genomes for CRISPRdb and 1,200 for CRISPI). As such, the
+spacers database constructed is the largest presently available
+online, consisting of 800,000 spacer sequences. We hope it can be
+useful to researchers, and can envision a couple of uses of our
+dataset:
 
 
 \begin{itemize}
@@ -252,7 +253,7 @@ researchers, and can envision a couple of uses of our dataset:
 \item Detection of anti-CRISPR genes
 \end{itemize}
 
-Building upon those features, improvement in data visualization would
+Building upon those features, improvements in data visualization would
 be welcome in order to bring further insights to users. Additional
 information that could be interesting to be visualized include:
 \begin{itemize}
@@ -260,20 +261,16 @@ information that could be interesting to be visualized include:
   is not associated with any cas genes in near proximity. Such arrays
   may be degenerated or have other functions
   \cite{mandin2007identification}
-\item Displaying the type of CRISPR-Cas systems: Each type of
-  CRISPR-Cas systems have distinctive features. Displaying the type
-  of CRISPR-Cas systems allows generalization of the
-  whole.\cite{makarova2011evolution,makarova2015updated}
-\item Information about secondary structures of repeats: Kunin et
-  al. clustered putative secondary structures of crRNA based on
+\item Information about secondary structures of repeats: Kunin \emph{et
+  al.} clustered putative secondary structures of crRNA based on
   sequence similarity and ability to form stable secondary structures
   \cite{kunin2007evolutionary}. Combining this information from the
   cas genes and the repeats may provide insights on function and
   regulation of CRISPR-Cas systems.
 \item Protospacer-adjacent-motifs (PAM) sequences: the selection of
   protospacers from invading DNA was shown to be determined by
-  recognition of PAMs which is several nucleotides long and varies
-  between different CRISPR-Cas systems
+  recognition of PAMs which are a couple of nucleotides long and
+  may vary between different CRISPR-Cas systems
   \cite{mojica2009short,deveau2008phage}
 \end{itemize}
 
